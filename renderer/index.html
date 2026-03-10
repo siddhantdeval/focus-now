@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus App</title>
+  <style>
+    /* Baseline Shell Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #sidebar {
+      width: 250px;
+      background-color: #fff;
+      border-right: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      padding: 10px 20px;
+      cursor: pointer;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      background-color: #f0f0f0;
+      color: #000;
+    }
+
+    #main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Used by S4 Focus Mode to hide sidebar */
+    body.focus-mode #sidebar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Shell Navigation -->
+  <div id="sidebar">
+    <div style="padding: 0 20px; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem;">Focus</div>
+    <div class="nav-item active" data-route="s1-dashboard">Dashboard</div>
+    <div class="nav-item" data-route="s2-task-management">Tasks</div>
+    <div class="nav-item" data-route="s5-reports">Reports</div>
+    <div class="nav-item" data-route="s6-settings">Settings</div>
+  </div>
+
+  <!-- Dynamic Screen Injection Point -->
+  <div id="main-content">
+    Loading...
+  </div>
+
+  <!-- Core Scripts -->
+  <script src="js/state.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/ipc-bridge.js"></script>
+
+  <!-- Dummy Screen Partials for initial load -->
+  <script>
+    // Navigation binding
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        // Update active class
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        e.target.classList.add('active');
+
+        // Navigate
+        const route = e.target.getAttribute('data-route');
+        window.appRouter.navigate(route);
+      });
+    });
+
+    // Create dummy files so the router doesn't crash on boot before Phase 2
+    fetch('/create-dummies', { method: 'POST' }).catch(() => {});
+
+    // Initial Load
+    window.onload = () => {
+      window.appRouter.navigate('s1-dashboard');
+    };
+  </script>
+</body>
+</html>
