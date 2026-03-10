@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Distraction-Free Focus Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .focus-sidebar:hover {
+            width: 64px;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-900 font-display transition-colors duration-300">
+<div class="relative flex h-screen w-full overflow-hidden">
+<!-- Subtle Collapsed Sidebar -->
+<aside class="group fixed left-0 top-0 h-full w-2 border-r border-slate-100 bg-white hover:w-16 transition-all duration-300 z-50 overflow-hidden flex flex-col items-center py-8">
+<div class="flex flex-col gap-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+</div>
+<div class="flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 cursor-pointer">
+<span class="material-symbols-outlined">check_box</span>
+</div>
+<div class="flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 cursor-pointer">
+<span class="material-symbols-outlined">bar_chart</span>
+</div>
+<div class="flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+</div>
+</div>
+</aside>
+<!-- Main Focus Area -->
+<main class="flex-1 flex flex-col items-center justify-center relative px-8">
+<!-- Top Status (Very Subtle) -->
+<div class="absolute top-12 left-1/2 -translate-x-1/2 text-slate-400 text-xs tracking-[0.2em] uppercase font-medium">
+                Focus Session Active
+            </div>
+<!-- Timer Container -->
+<div class="flex flex-col items-center gap-4 text-center">
+<!-- Large Bold Timer -->
+<div class="text-[160px] md:text-[220px] font-bold leading-none tracking-tighter text-slate-900 select-none">
+                    24:59
+                </div>
+<!-- Task Details -->
+<div class="flex flex-col gap-6 mt-4">
+<div class="space-y-1">
+<h1 class="text-2xl font-normal text-slate-900">Design System Audit</h1>
+<p class="text-sm text-slate-400 font-medium tracking-wide">3 of 5 SUBTASKS COMPLETED</p>
+</div>
+<!-- Progress Bar (Subtle) -->
+<div class="w-64 h-1 bg-slate-100 rounded-full overflow-hidden mx-auto">
+<div class="h-full bg-slate-900 w-[60%] transition-all duration-500"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Controls -->
+<div class="absolute bottom-24 flex items-center gap-16">
+<button class="group flex flex-col items-center gap-2 text-primary">
+<span class="text-xs uppercase tracking-widest font-bold">Pause</span>
+<div class="h-[2px] w-full bg-primary rounded-full"></div>
+</button>
+<button class="group flex flex-col items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors">
+<span class="text-xs uppercase tracking-widest font-bold">Skip Break</span>
+<div class="h-[2px] w-0 group-hover:w-full bg-slate-900 rounded-full transition-all duration-300"></div>
+</button>
+<button class="group flex flex-col items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors">
+<span class="text-xs uppercase tracking-widest font-bold">Reset Session</span>
+<div class="h-[2px] w-0 group-hover:w-full bg-slate-900 rounded-full transition-all duration-300"></div>
+</button>
+</div>
+<!-- Quote or Subtle Reminder at very bottom -->
+<div class="absolute bottom-8 text-slate-300 text-[10px] uppercase tracking-[0.3em] font-light">
+                Deep work is a superpower in our increasingly competitive economy.
+            </div>
+</main>
+<!-- Right Side Utility (Optional/Hidden) -->
+<div class="absolute right-8 top-8">
+<button class="p-2 text-slate-300 hover:text-slate-900 transition-colors">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+</div>
+</div>
+</body></html>

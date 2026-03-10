@@ -1,0 +1,135 @@
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#000000",
+            "background-light": "#f6f7f8",
+            "background-dark": "#0a0a0a",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style type="text/tailwindcss">
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .blur-overlay {
+      backdrop-filter: blur(12px);
+    }.custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 10px;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+</style>
+<title>Monochromatic Command Palette</title>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="fixed inset-0 overflow-hidden blur-sm opacity-20 pointer-events-none grayscale">
+<div class="layout-container flex h-full flex-col">
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-10 py-4 bg-white dark:bg-slate-900">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-black dark:text-white text-3xl">grid_view</span>
+<h2 class="text-lg font-bold">ProductivityApp</h2>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex gap-6">
+<span class="text-sm font-medium">Dashboard</span>
+<span class="text-sm font-medium">Tasks</span>
+<span class="text-sm font-medium">Focus</span>
+</div>
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700"></div>
+</div>
+</header>
+<main class="p-10 grid grid-cols-3 gap-6">
+<div class="h-64 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6"></div>
+<div class="h-64 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6"></div>
+<div class="h-64 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6"></div>
+<div class="col-span-2 h-96 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6"></div>
+<div class="h-96 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6"></div>
+</main>
+</div>
+</div>
+<div class="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-slate-900/10 dark:bg-black/60 blur-overlay">
+<div class="w-full max-w-[640px] bg-white dark:bg-[#111111] rounded-xl overflow-hidden flex flex-col shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)] border border-slate-200 dark:border-white/10">
+<div class="relative flex items-center px-6 py-6 border-b border-slate-100 dark:border-white/5">
+<span class="material-symbols-outlined text-slate-400 mr-4">search</span>
+<input autofocus="" class="w-full bg-transparent border-none focus:ring-0 text-xl font-normal placeholder:text-slate-400 text-slate-900 dark:text-slate-100 p-0" placeholder="Type a command..." type="text"/>
+<div class="flex items-center gap-1 ml-4 shrink-0">
+<span class="px-2 py-1 rounded border border-slate-200 dark:border-white/20 text-[10px] font-bold text-slate-400">ESC</span>
+</div>
+</div>
+<div class="max-h-[60vh] overflow-y-auto py-4 custom-scrollbar">
+<section class="px-2 mb-6">
+<h3 class="px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 dark:text-slate-500">Contextual Suggestions</h3>
+<div class="group flex items-center gap-4 px-4 py-3 rounded-lg bg-slate-100 dark:bg-white/10 cursor-pointer mx-2">
+<span class="material-symbols-outlined text-slate-900 dark:text-white">timer</span>
+<span class="flex-1 text-sm font-medium text-slate-900 dark:text-white">Start Focus Session</span>
+<span class="text-[10px] text-slate-400 font-medium tracking-tight">Jump to</span>
+</div>
+<div class="group flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer mx-2 transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">add_task</span>
+<span class="flex-1 text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Create New Task</span>
+</div>
+<div class="group flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer mx-2 transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">assessment</span>
+<span class="flex-1 text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Go to Reports</span>
+</div>
+<div class="group flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer mx-2 transition-colors">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">settings</span>
+<span class="flex-1 text-sm font-medium text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Settings</span>
+</div>
+</section>
+<section class="px-2">
+<h3 class="px-6 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 dark:text-slate-500">Recent Searches</h3>
+<div class="group flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer mx-2 transition-colors">
+<span class="material-symbols-outlined text-slate-400 text-sm">history</span>
+<span class="flex-1 text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Quarterly growth projection</span>
+</div>
+<div class="group flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer mx-2 transition-colors">
+<span class="material-symbols-outlined text-slate-400 text-sm">history</span>
+<span class="flex-1 text-sm text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white">Client meeting notes</span>
+</div>
+</section>
+</div>
+<footer class="flex items-center justify-end gap-6 px-6 py-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.02]">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-white dark:bg-white/10 border border-slate-200 dark:border-white/20 text-[10px] font-bold text-slate-900 dark:text-slate-300">ENTER</span>
+<span class="text-[10px] text-slate-400 font-medium">to select</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="flex items-center gap-0.5">
+<span class="px-2 py-0.5 rounded bg-white dark:bg-white/10 border border-slate-200 dark:border-white/20 text-[10px] font-bold text-slate-900 dark:text-slate-300">↑</span>
+<span class="px-2 py-0.5 rounded bg-white dark:bg-white/10 border border-slate-200 dark:border-white/20 text-[10px] font-bold text-slate-900 dark:text-slate-300">↓</span>
+</div>
+<span class="text-[10px] text-slate-400 font-medium">to navigate</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-white dark:bg-white/10 border border-slate-200 dark:border-white/20 text-[10px] font-bold text-slate-900 dark:text-slate-300">ESC</span>
+<span class="text-[10px] text-slate-400 font-medium">to close</span>
+</div>
+</footer>
+</div>
+</div>
+
+</body></html>

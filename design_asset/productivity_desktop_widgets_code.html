@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Productivity Desktop Widgets</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1173d4",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .blurred-bg {
+            background: linear-gradient(135deg, #1173d4 0%, #6366f1 100%);
+            position: relative;
+        }
+        .blurred-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            filter: blur(80px);
+            opacity: 0.6;
+            z-index: -1;
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen">
+<div class="relative flex h-screen w-full flex-col overflow-hidden items-center justify-center blurred-bg">
+<div class="absolute top-0 w-full">
+<header class="flex items-center justify-between whitespace-nowrap px-10 py-4 bg-white/10 backdrop-blur-md border-b border-white/10">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 flex items-center justify-center">
+<span class="material-symbols-outlined text-white">grid_view</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">OS Productivity</h2>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="flex items-center gap-8 text-white/80 text-sm font-medium">
+<a class="hover:text-white" href="#">Dashboard</a>
+<a class="hover:text-white" href="#">Widgets</a>
+<a class="hover:text-white" href="#">Focus</a>
+</nav>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-white/20 text-white">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-white/20 border border-white/30 overflow-hidden">
+<div class="w-full h-full bg-slate-200" data-alt="User profile placeholder avatar"></div>
+</div>
+</div>
+</div>
+</header>
+</div>
+<div class="flex flex-col md:flex-row gap-8 items-start justify-center p-8">
+<div class="w-64 h-64 bg-white rounded-xl flex flex-col items-center justify-center p-6 border border-slate-200">
+<div class="relative flex items-center justify-center w-32 h-32 mb-4">
+<svg class="progress-ring w-32 h-32">
+<circle class="text-slate-100" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-slate-900" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="91.1" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-3xl font-bold text-slate-900">24:15</span>
+</div>
+</div>
+<div class="text-center">
+<p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Active Session</p>
+<p class="text-sm font-medium text-slate-900">Project Alpha</p>
+</div>
+</div>
+<div class="w-[512px] h-64 bg-white rounded-xl flex overflow-hidden border border-slate-200">
+<div class="w-1/2 flex flex-col items-center justify-center p-6 border-r border-slate-100">
+<div class="relative flex items-center justify-center w-28 h-28 mb-3">
+<svg class="progress-ring w-28 h-28">
+<circle class="text-slate-100" cx="56" cy="56" fill="transparent" r="52" stroke="currentColor" stroke-width="4"></circle>
+<circle class="text-slate-900" cx="56" cy="56" fill="transparent" r="52" stroke="currentColor" stroke-dasharray="326.7" stroke-dashoffset="81.6" stroke-linecap="round" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-2xl font-bold text-slate-900">24:15</span>
+</div>
+</div>
+<div class="text-center">
+<p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Project Alpha</p>
+</div>
+</div>
+<div class="w-1/2 p-8 flex flex-col justify-center gap-6">
+<h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">Today's Tasks</h3>
+<div class="space-y-5">
+<div class="flex items-center gap-4">
+<div class="w-5 h-5 rounded border-2 border-slate-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-slate-900 font-bold">check</span>
+</div>
+<span class="text-sm font-medium text-slate-900">Review project specs</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-5 h-5 rounded border-2 border-slate-200"></div>
+<span class="text-sm font-medium text-slate-900">Update design system</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-5 h-5 rounded border-2 border-slate-200"></div>
+<span class="text-sm font-medium text-slate-900">Team sync meeting</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 flex gap-4">
+<div class="bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 flex items-center gap-3">
+<span class="material-symbols-outlined text-white text-[18px]">search</span>
+<span class="text-white/80 text-sm">Search Apps...</span>
+</div>
+<div class="bg-white/20 backdrop-blur-xl p-2 rounded-full border border-white/20 flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">mail</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

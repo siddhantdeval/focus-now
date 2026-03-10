@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>macOS Rich Notification Popup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#1173d4",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex items-center justify-center p-6">
+<!-- macOS Style Notification Container -->
+<div class="relative w-full max-w-[420px] glass-effect rounded-xl shadow-2xl border border-white/40 overflow-hidden">
+<!-- Header / App Info Section -->
+<div class="px-5 pt-5 pb-3 flex items-start gap-4">
+<!-- Monochromatic App Icon -->
+<div class="flex-shrink-0 size-12 bg-slate-900 dark:bg-slate-100 rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white dark:text-slate-900 text-3xl font-bold">
+                    check_circle
+                </span>
+</div>
+<!-- Notification Content -->
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between mb-0.5">
+<span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Productivity App</span>
+<span class="text-[11px] text-slate-400">now</span>
+</div>
+<h3 class="text-[15px] font-bold text-slate-900 dark:text-slate-100 leading-tight">Focus Complete</h3>
+<p class="text-[13px] text-slate-600 dark:text-slate-300 leading-normal mt-1">
+                    Great job on UX Audit. Time for a 5m break.
+                </p>
+</div>
+</div>
+<!-- Rich Image/Content Section (Optional macOS Rich Media Style) -->
+<div class="px-5 pb-4">
+<div class="w-full h-32 rounded-lg bg-cover bg-center border border-slate-200/50" data-alt="Minimalist desk setup with laptop and coffee" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBwLhk19inK1xx2FmbIDblplGJKFysiFXcmz6FJHzL0h-Le3tLAhLmfFFHaDp4OkdrnTKKlvTsuhf3csUvukMvU8YCJqRMX78OB43glS3RRGegVCSHGCBGxRpWv0Q3l6UM1_Eg-L_y93mAnskOOpVyl-PVUGXMnOCOy5Tnd-hRjTHX7yc6NpXpM64vAPm4p45G8B4Q6w97mB1Sdfg6kbWfHLzVOQIJ6yfb9KQnbTs3pGPoaRgzhWez3VSIrczApormAvpdl_FMVPlM7');">
+</div>
+</div>
+<!-- Action Buttons Section -->
+<div class="px-5 pb-5 flex gap-2">
+<!-- Primary Action -->
+<button class="flex-1 h-9 flex items-center justify-center bg-primary text-white text-[13px] font-medium rounded-lg hover:bg-primary/90 transition-colors">
+                Start Break
+            </button>
+<!-- Secondary Action -->
+<button class="flex-1 h-9 flex items-center justify-center bg-slate-200/50 dark:bg-slate-700/50 text-slate-900 dark:text-slate-100 text-[13px] font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                Add +5 Mins
+            </button>
+<!-- Tertiary Action -->
+<button class="flex-none px-4 h-9 flex items-center justify-center border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 text-[13px] font-medium rounded-lg hover:bg-white/50 dark:hover:bg-black/20 transition-colors">
+                Skip
+            </button>
+</div>
+<!-- macOS Resize/Close Hint (Subtle visual only) -->
+<div class="absolute top-2 right-2 opacity-0 hover:opacity-100 transition-opacity">
+<button class="size-5 rounded-full bg-slate-400/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px] text-slate-600">close</span>
+</button>
+</div>
+</div>
+<!-- Background UI Elements (To simulate a desktop environment) -->
+<div class="fixed inset-0 -z-10 pointer-events-none">
+<div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 via-background-light to-primary/5 dark:from-primary/20 dark:via-background-dark dark:to-primary/10"></div>
+<!-- Mock Top Bar -->
+<div class="w-full h-8 bg-white/20 dark:bg-black/20 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-lg">ios</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-300">Finder</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300">File</span>
+<span class="text-xs font-medium text-slate-700 dark:text-slate-300">Edit</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-sm">wifi</span>
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-sm">battery_full</span>
+<span class="text-[11px] font-medium text-slate-700 dark:text-slate-300">Tue Oct 24 10:00 AM</span>
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-sm">search</span>
+<span class="material-symbols-outlined text-slate-700 dark:text-slate-300 text-sm">list</span>
+</div>
+</div>
+</div>
+</body></html>
