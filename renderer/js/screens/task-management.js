@@ -2,12 +2,14 @@ class TaskManagementController {
   constructor() {
     this.tasks = [];
     this.api = window.focusAPI;
+    this.state = window.appState;
     this.selectedTaskId = null;
+    this.unsubTasks = null;
   }
 
   async mount() {
-    this.todayList = document.querySelector('h3:contains("Today")')?.nextElementSibling || document.getElementById('s2-today-task-list');
-    this.upcomingList = document.querySelector('h3:contains("Upcoming")')?.nextElementSibling || document.getElementById('s2-upcoming-task-list');
+    this.todayList = document.getElementById('s2-today-task-list') || document.querySelector('h3:contains("Today")')?.nextElementSibling;
+    this.upcomingList = document.getElementById('s2-upcoming-task-list') || document.querySelector('h3:contains("Upcoming")')?.nextElementSibling;
     this.detailContainer = document.getElementById('s2-detail-panel-container') || document.querySelector('aside.w-96');
     this.inlineAddInput = document.getElementById('s2-inline-add-input') || document.querySelector('input[placeholder^="Add a task"]');
     this.newTaskBtn = document.getElementById('s2-header-new-task-btn') || document.querySelector('header button:last-child');
@@ -27,14 +29,16 @@ class TaskManagementController {
       });
     }
 
-    await this.loadTasks();
+    // Reactive State Subscriptions
+    this.unsubTasks = this.state.subscribe('tasks', (tasks) => {
+        this.processAndRender(tasks);
+    });
+
+    // Initial hydration
+    this.processAndRender(this.state.get('tasks'));
   }
 
-  async loadTasks() {
-    // Basic split logic
-    const allTasks = await this.api.getTasks({});
-
-    // For simplicity, partition locally based on due_date (if present)
+  processAndRender(allTasks) {
     const today = new Date();
     today.setHours(0,0,0,0);
     const tomorrow = new Date(today);
@@ -43,12 +47,14 @@ class TaskManagementController {
     this.todayTasks = [];
     this.upcomingTasks = [];
 
-    allTasks.forEach(task => {
+    // Filter out subtasks from the main list
+    const topLevelTasks = allTasks.filter(t => !t.parent_id);
+
+    topLevelTasks.forEach(task => {
         if (!task.due_date) {
-            this.todayTasks.push(task); // Default to today if no date
+            this.todayTasks.push(task);
             return;
         }
-
         const taskDate = new Date(task.due_date);
         if (taskDate < tomorrow) {
             this.todayTasks.push(task);
@@ -63,37 +69,34 @@ class TaskManagementController {
 
   async createTask(title) {
     await this.api.createTask({ title, due_date: Date.now() });
-    await this.loadTasks();
   }
 
   async toggleTaskCompletion(id, is_completed) {
-    await this.api.updateTask(id, { is_completed: is_completed ? 1 : 0, status: is_completed ? 'COMPLETED' : 'TODO' });
-    await this.loadTasks();
+    await this.api.updateTask(id, { is_completed });
   }
 
   renderTasks(taskList, container, isToday) {
     if (!container) return;
 
-    // Preserve inline add
-    const inlineAddHtml = isToday && container.lastElementChild && container.lastElementChild.querySelector('input')
-                          ? container.lastElementChild.outerHTML : '';
+    // Preserve inline add row
+    const containers = Array.from(container.children);
+    const inlineAddRow = containers.find(child => child.querySelector('input'));
+    const inlineAddHtml = isToday && inlineAddRow ? inlineAddRow.outerHTML : '';
 
     let html = '';
     taskList.forEach(task => {
-      const isCompleted = task.is_completed === 1 || task.status === 'COMPLETED';
+      const isCompleted = task.is_completed === 1;
 
       const checkboxClass = isCompleted
         ? 'size-5 rounded bg-black border-2 border-black flex items-center justify-center cursor-pointer'
         : 'size-5 rounded border-2 border-neutral-300 flex items-center justify-center group-hover:border-black transition-colors cursor-pointer';
 
       const checkIcon = isCompleted ? '<span class="material-symbols-outlined text-white text-xs font-bold">check</span>' : '';
-
       const textClass = isCompleted ? 'flex-1 text-neutral-400 line-through' : 'flex-1';
-
       const selectedClass = this.selectedTaskId === task.id ? 'bg-neutral-50' : '';
 
       html += `
-        <div class="flex items-center gap-4 px-6 py-4 border-b border-[var(--border-color)] hover:bg-neutral-50 transition-colors group ${selectedClass}"
+        <div class="flex items-center gap-4 px-6 py-4 border-b border-neutral-100 hover:bg-neutral-50 transition-colors group ${selectedClass}"
              data-task-id="${task.id}"
              onclick="window.appControllers['s2-task-management'].selectTask('${task.id}')">
           <div class="${checkboxClass}" onclick="event.stopPropagation(); window.appControllers['s2-task-management'].toggleTaskCompletion('${task.id}', ${!isCompleted})">
@@ -102,7 +105,7 @@ class TaskManagementController {
           <div class="${textClass}">
             <p class="font-medium">${task.title}</p>
           </div>
-          <div class="flex items-center gap-4 text-sm ${isCompleted ? 'text-neutral-300' : 'text-neutral-400'}">
+          <div class="flex items-center gap-4 text-sm ${isCompleted ? 'text-neutral-200' : 'text-neutral-400'}">
              <span class="flex items-center gap-1">
                 <span class="material-symbols-outlined text-base">calendar_today</span>
                 ${isToday ? 'Today' : 'Upcoming'}
@@ -114,9 +117,9 @@ class TaskManagementController {
 
     container.innerHTML = html + inlineAddHtml;
 
-    // Rebind inline add input after render
+    // Rebind inline add input
     if (isToday) {
-        this.inlineAddInput = container.querySelector('input[placeholder^="Add a task"]');
+        this.inlineAddInput = container.querySelector('input');
         if (this.inlineAddInput) {
             this.inlineAddInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && this.inlineAddInput.value.trim() !== '') {
@@ -131,7 +134,7 @@ class TaskManagementController {
   selectTask(taskId) {
     this.selectedTaskId = taskId;
 
-    // Highlight selected row visually
+    // Update UI highlights
     document.querySelectorAll('.group[data-task-id]').forEach(row => {
         if (row.getAttribute('data-task-id') === taskId) {
             row.classList.add('bg-neutral-50');
@@ -140,18 +143,19 @@ class TaskManagementController {
         }
     });
 
-    // Mount S3 Task Detail controller into the aside container
+    // Mount S3 Task Detail controller
     if (this.detailContainer && window.appControllers['s3-task-detail']) {
         window.appControllers['s3-task-detail'].mountInContainer(this.detailContainer, taskId);
     }
   }
 }
 
+// Register controller
 if (!window.appControllers) window.appControllers = {};
 window.appControllers['s2-task-management'] = new TaskManagementController();
 window.appRouter.registerController('s2-task-management', window.appControllers['s2-task-management']);
 
-// Add a helper for document.querySelector with contains
+// Helper for querySelector with contains
 const _originalQuerySelector = Document.prototype.querySelector;
 Document.prototype.querySelector = function(selector) {
     if (selector.includes(':contains("')) {

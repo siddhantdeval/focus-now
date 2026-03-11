@@ -14,8 +14,17 @@ class State {
   }
 
   set(key, value) {
+    // console.log(`State update [${key}]:`, value);
     this.state[key] = value;
     this.notify(key, value);
+  }
+
+  setTasks(tasks) {
+    this.set('tasks', tasks);
+  }
+
+  setTimer(timer) {
+    this.set('timer', timer);
   }
 
   subscribe(key, callback) {

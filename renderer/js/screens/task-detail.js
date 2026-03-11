@@ -129,9 +129,6 @@ class TaskDetailController {
       clearTimeout(this.titleDebounceTimeout);
       this.titleDebounceTimeout = setTimeout(async () => {
           await this.api.updateTask(this.taskId, { title: newTitle });
-          if (window.appControllers['s2-task-management']) {
-              window.appControllers['s2-task-management'].loadTasks();
-          }
       }, 500);
   }
 
