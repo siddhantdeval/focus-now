@@ -12,7 +12,7 @@ class TaskDetailController {
     this.taskId = taskId;
 
     // Load HTML
-    const response = await fetch('../screens/s3-task-detail.html');
+    const response = await fetch('screens/s3-task-detail.html');
     if (!response.ok) {
         console.error("Failed to load S3 partial");
         return;

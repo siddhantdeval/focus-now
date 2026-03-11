@@ -118,8 +118,6 @@
       });
     });
 
-    // Create dummy files so the router doesn't crash on boot before Phase 2
-    fetch('/create-dummies', { method: 'POST' }).catch(() => {});
 
     // Initial Load
     window.onload = () => {
