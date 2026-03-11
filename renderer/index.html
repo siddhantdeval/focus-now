@@ -4,6 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Focus App</title>
+
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#000000",
+                        "accent": "#1A1A1A",
+                        "background-light": "#FFFFFF",
+                        "sidebar-light": "#F5F5F5",
+                        "border-light": "#E5E5E5",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+  </script>
+
   <style>
     /* Baseline Shell Styles */
     body {
@@ -71,6 +96,12 @@
   <script src="js/state.js"></script>
   <script src="js/router.js"></script>
   <script src="js/ipc-bridge.js"></script>
+
+  <script src="js/screens/dashboard.js"></script>
+  <script src="js/screens/task-management.js"></script>
+  <script src="js/screens/task-detail.js"></script>
+  <script src="js/screens/focus-mode.js"></script>
+
 
   <!-- Dummy Screen Partials for initial load -->
   <script>
