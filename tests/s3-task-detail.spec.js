@@ -40,7 +40,6 @@ test.describe('S3 Task Detail', () => {
     });
 
     // Now mount S3 directly using the correct HTML path that Task Management uses.
-    // Let's check what Task Management actually does - it passes taskId to window.appControllers['s3-task-detail'].mountInContainer
     await window.evaluate(async (id) => {
         const detailContainer = document.getElementById('s2-detail-panel-container');
         await window.appControllers['s3-task-detail'].mountInContainer(detailContainer, id);
@@ -108,6 +107,69 @@ test.describe('S3 Task Detail', () => {
           });
 
           expect(isTimerRunning).toBe(true);
+      }
+  });
+
+  test('should allow updating task title', async () => {
+      const s3Container = window.locator('#s2-detail-panel-container');
+      const titleEl = s3Container.locator('h2');
+
+      if (await titleEl.count() > 0) {
+          const newTitle = 'Updated Task Title ' + Date.now();
+          // It's contenteditable, so we need to click and type, or evaluate innerText and dispatch event
+          await window.evaluate(({selector, text}) => {
+              const el = document.querySelector(selector);
+              if (el) {
+                  el.innerText = text;
+                  el.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+          }, { selector: '#s2-detail-panel-container h2', text: newTitle });
+
+          // Wait for debounce (500ms)
+          await window.waitForTimeout(1000);
+
+          // Check DB
+          const savedTask = await window.evaluate(async (id) => {
+              const api = window.focusAPI.getTasks ? window.focusAPI : window.focusAPI.rawApi;
+              const res = await api.getTaskWithSubtasks(id);
+              return res.task;
+          }, taskId);
+
+          expect(savedTask.title).toBe(newTitle);
+      }
+  });
+
+  test('should toggle subtask completion', async () => {
+      const s3Container = window.locator('#s2-detail-panel-container');
+      // Assume a subtask exists from previous test
+      // find the checkbox next to the subtask
+      const subtaskCheckbox = s3Container.locator('input[type="checkbox"]').first();
+
+      if (await subtaskCheckbox.count() > 0) {
+          const wasChecked = await subtaskCheckbox.isChecked();
+
+          await subtaskCheckbox.click();
+
+          await window.waitForTimeout(1000); // wait for DB and re-render
+
+          const isNowChecked = await subtaskCheckbox.isChecked();
+          expect(isNowChecked).not.toBe(wasChecked);
+      }
+  });
+
+  test('should close detail panel on close button click', async () => {
+      const s3Container = window.locator('#s2-detail-panel-container');
+      // S3 controller: this.closeBtn = this.container.querySelector('header button');
+      const closeBtn = s3Container.locator('header button').first();
+
+      if (await closeBtn.count() > 0) {
+          await closeBtn.click();
+
+          await window.waitForTimeout(500);
+
+          // Container should be empty after close
+          const innerHTML = await s3Container.innerHTML();
+          expect(innerHTML.trim()).toBe('');
       }
   });
 });

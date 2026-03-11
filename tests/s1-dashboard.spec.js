@@ -56,4 +56,53 @@ test.describe('S1 Dashboard', () => {
 
     expect(hasTask).toBe(true);
   });
+
+  test('should toggle timer state on button click', async () => {
+    // Make sure timer is stopped initially
+    await window.evaluate(async () => {
+        const api = window.focusAPI.getTasks ? window.focusAPI : window.focusAPI.rawApi;
+        await api.stopTimer();
+    });
+
+    await window.waitForTimeout(1000);
+
+    // S1 timer button has text 'START' or 'PAUSE'
+    // Controller uses `.bg-black.text-white.font-bold.rounded-full`
+    // Let's be safer and use the id if possible, but controller looks for class:
+    // `this.timerToggleBtn = document.querySelector('.bg-black.text-white.font-bold.rounded-full');`
+    const timerBtn = window.locator('.bg-black.text-white.font-bold.rounded-full, .bg-neutral-800.text-white.font-bold.rounded-full').first();
+
+    // Check initial state
+    await expect(timerBtn).toBeVisible({ timeout: 5000 });
+
+    // START
+    await timerBtn.click();
+    await window.waitForTimeout(1000);
+
+    const isRunning = await window.evaluate(async () => {
+        const api = window.focusAPI.getTasks ? window.focusAPI : window.focusAPI.rawApi;
+        const state = await api.getTimerState();
+        return state.status === 'RUNNING';
+    });
+
+    expect(isRunning).toBe(true);
+
+    // PAUSE
+    await timerBtn.click();
+    await window.waitForTimeout(1000);
+
+    const isPaused = await window.evaluate(async () => {
+        const api = window.focusAPI.getTasks ? window.focusAPI : window.focusAPI.rawApi;
+        const state = await api.getTimerState();
+        return state.status === 'PAUSED';
+    });
+
+    expect(isPaused).toBe(true);
+
+    // Cleanup timer state for other tests if necessary
+    await window.evaluate(async () => {
+        const api = window.focusAPI.getTasks ? window.focusAPI : window.focusAPI.rawApi;
+        await api.stopTimer();
+    });
+  });
 });
