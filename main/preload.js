@@ -35,6 +35,11 @@ contextBridge.exposeInMainWorld('focusAPI', {
   setReminder: (taskId, remindAt) => ipcRenderer.invoke('reminders:set', { taskId, remindAt }),
   deleteReminder: (taskId) => ipcRenderer.invoke('reminders:delete', taskId),
 
+
+  // Window controls
+  setFullScreen: (flag) => ipcRenderer.invoke('app:setFullScreen', flag),
+  openPiP: () => ipcRenderer.invoke('app:openPiP'),
+
   // Navigation (main → renderer)
   onNavigate: (cb) => ipcRenderer.on('app:navigate', (_, screen) => cb(screen)),
 });

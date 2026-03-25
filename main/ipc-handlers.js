@@ -57,6 +57,47 @@ function registerIpcHandlers() {
     db.prepare(`DELETE FROM reminders WHERE task_id = ?`).run(taskId);
     return { success: true };
   });
+
+  // Window Controls
+  ipcMain.handle('app:setFullScreen', (e, flag) => {
+    const win = require('electron').BrowserWindow.fromWebContents(e.sender);
+    if (win) {
+      win.setFullScreen(flag);
+    }
+    return true;
+  });
+
+
+  ipcMain.handle('app:openPiP', (e) => {
+    const { BrowserWindow } = require('electron');
+    const path = require('path');
+
+    // Check if one already exists
+    let pipWindows = BrowserWindow.getAllWindows().filter(w => w.title === 'Focus PiP');
+    if (pipWindows.length > 0) {
+        pipWindows[0].show();
+        return true;
+    }
+
+    const pipWin = new BrowserWindow({
+      width: 250,
+      height: 120,
+      frame: false,
+      transparent: true,
+      alwaysOnTop: true,
+      resizable: false,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false,
+        contextIsolation: true
+      }
+    });
+
+    pipWin.loadFile(path.join(__dirname, '../renderer/pip.html'));
+    return true;
+  });
+
+
 }
 
 module.exports = { registerIpcHandlers };

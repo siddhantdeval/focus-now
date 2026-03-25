@@ -1,4 +1,116 @@
-<div style="padding: 20px; text-align: center;">
-  <h2>Tasks</h2>
-  <p>Phase 2 will inject the Stitch UI here.</p>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-size: 20px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+    </style>
+    <div class="h-full w-full bg-[var(--bg-main)] text-[var(--text-primary)] antialiased overflow-hidden flex flex-col">
+
+<header class="h-16 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between px-8 shrink-0">
+<h2 class="text-lg font-bold tracking-tight">Today's Focus</h2>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-full text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="bg-primary text-white dark:bg-slate-100 dark:text-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2" id="s2-header-new-task-btn">
+<span class="material-symbols-outlined !text-sm">add</span>
+                        New Task
+                    </button>
 </div>
+</header>
+<div class="flex-1 overflow-y-auto custom-scrollbar px-8 py-6 space-y-10">
+<!-- Group: Today -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Today</h3>
+<span class="text-[10px] px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full font-bold" id="s2-today-task-list">3 Tasks</span>
+</div>
+<div class="space-y-1">
+<!-- Active Selected Task Row -->
+<div class="group flex items-center gap-4 py-3 px-4 -mx-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 cursor-pointer">
+<input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold text-primary dark:text-white truncate">Design System Update</p>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined !text-[14px]">calendar_today</span>
+                                        Due Today
+                                    </span>
+<span class="text-[11px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined !text-[14px]">checklist</span>
+                                        2/5
+                                    </span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-300 hover:text-primary cursor-pointer">notifications</span>
+</div>
+<!-- Task Row -->
+<div class="group flex items-center gap-4 py-3 px-4 -mx-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer border border-transparent">
+<input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">Review Project Proposal</p>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined !text-[14px]">calendar_today</span>
+                                        14:00
+                                    </span>
+<span class="text-[11px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined !text-[14px]">checklist</span>
+                                        0/3
+                                    </span>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-200 group-hover:text-slate-400">notifications</span>
+</div>
+<!-- Task Row -->
+<div class="group flex items-center gap-4 py-3 px-4 -mx-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer border border-transparent">
+<input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">Client Onboarding Meeting</p>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-slate-400 flex items-center gap-1">
+<span class="material-symbols-outlined !text-[14px]">calendar_today</span>
+                                        16:30
+                                    </span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary font-bold">notifications_active</span>
+</div>
+</div>
+</section>
+<!-- Group: Upcoming -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Upcoming</h3>
+</div>
+<div class="space-y-1 opacity-70">
+<div class="group flex items-center gap-4 py-3 px-4 -mx-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer">
+<input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">Q4 Strategy Planning</p>
+<div class="flex items-center gap-3 mt-1">
+<span class="text-[11px] text-slate-400">Oct 24</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Group: Completed -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Completed</h3>
+</div>
+<div class="space-y-1">
+<div class="group flex items-center gap-4 py-3 px-4 -mx-4 rounded-xl opacity-50">
+<input checked="" class="w-5 h-5 rounded border-slate-300 text-slate-400 bg-slate-100" type="checkbox">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-slate-500 line-through truncate">Team Standup</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+    </div>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Focus PiP</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      border-radius: 8px; /* For frameless rounded corners */
+      user-select: none;
+      -webkit-app-region: drag; /* Make it draggable */
+    }
+
+    #timer {
+      font-size: 2.5rem;
+      font-weight: bold;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 5px;
+    }
+
+    #controls {
+      display: flex;
+      gap: 15px;
+      -webkit-app-region: no-drag; /* Buttons must be non-draggable */
+    }
+
+    button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">25:00</div>
+  <div id="controls">
+    <button id="btn-pause">⏸</button>
+    <button id="btn-stop">⏹</button>
+  </div>
+
+  <script>
+    const api = window.focusAPI;
+    const timerEl = document.getElementById('timer');
+    const pauseBtn = document.getElementById('btn-pause');
+    const stopBtn = document.getElementById('btn-stop');
+
+    let currentState = null;
+
+    api.onTimerTick((state) => {
+        currentState = state;
+        const mins = Math.floor(state.remaining / 60).toString().padStart(2, '0');
+        const secs = (state.remaining % 60).toString().padStart(2, '0');
+        timerEl.textContent = `${mins}:${secs}`;
+
+        pauseBtn.textContent = state.state === 'RUNNING' ? '⏸' : '▶';
+    });
+
+    pauseBtn.addEventListener('click', async () => {
+        if (!currentState) return;
+        if (currentState.state === 'RUNNING') {
+            await api.pauseTimer();
+        } else if (currentState.state === 'PAUSED') {
+            await api.resumeTimer();
+        }
+    });
+
+    stopBtn.addEventListener('click', async () => {
+        await api.stopTimer();
+    });
+
+    // Initial load
+    api.getTimerState().then(state => {
+        if(state) {
+            currentState = state;
+            const mins = Math.floor(state.remaining / 60).toString().padStart(2, '0');
+            const secs = (state.remaining % 60).toString().padStart(2, '0');
+            timerEl.textContent = `${mins}:${secs}`;
+            pauseBtn.textContent = state.state === 'RUNNING' ? '⏸' : '▶';
+        }
+    });
+  </script>
+</body>
+</html>

@@ -2,42 +2,52 @@
 
 **Minimalist, Local-First Productivity for Deep Work.**
 
-Focus is a high-fidelity Pomodoro and Task Management desktop application built with Electron.js. Designed for knowledge workers, it prioritizes a distraction-free experience, pixel-perfect aesthetics, and data sovereignty.
+Focus is a high-fidelity Pomodoro and Task Management desktop application built with Electron.js. Designed for knowledge workers, it prioritizes a distraction-free experience, pixel-perfect aesthetics, and absolute data sovereignty.
 
 ---
 
-## 🚀 Vision
-Focus is not just another task app. It is a **dedicated environment** for deep work. By combining minimalist design with local-first persistence, it ensures that your productivity data stays yours, and your focus remains uninterrupted.
+## 🏛️ Architectural Principles
 
-## 🛠 Tech Stack
-| Layer | Technology | Rationale |
-|---|---|---|
-| **Shell** | [Electron.js](https://www.electronjs.org/) | Native OS integration (Tray, Shortcuts, Notifications). |
-| **Logic** | Node.js | Robust backend services and IPC handling. |
-| **Persistence** | [SQLite](https://sqlite.org/) (`better-sqlite3`) | Low-latency, synchronous, local-first storage. |
-| **Design** | Vanilla HTML/CSS | Pixel-perfect reproduction of [Google Stitch](https://stitch.google.com) designs. |
-| **Precision** | Node Worker Threads | High-accuracy timer engine that survives renderer reloads. |
+As a **Senior Architect-driven project**, Focus adheres to a set of strict engineering standards to ensure stability, performance, and security:
 
-## ✨ Key Features
+### 1. Local-First & Privacy
+- **Zero Cloud Dependency**: All data resides in a local SQLite database using `better-sqlite3`.
+- **Zero Telemetry**: No tracking, no outbound calls. Your focus data is yours alone.
+- **Offline Reliability**: The app works perfectly without an internet connection.
+
+### 2. Performance Engineering
+- **Off-Main-Thread Timer**: The core Pomodoro engine runs in a Node.js `worker_thread`, ensuring clock precision even if the UI is under heavy load.
+- **SQLite WAL Mode**: Employs Write-Ahead Logging for non-blocking database writes.
+- **Vanilla Performance**: The frontend uses a custom, lightweight SPA router with vanilla JS and CSS to ensure zero framework overhead and instant startup.
+
+### 3. Security-First IPC
+- **Context Isolation & Preload**: All communication between the UI and system is strictly controlled through a secure `contextBridge`.
+- **Hardened Electron**: `nodeIntegration` is disabled, and a strict Content Security Policy (CSP) is enforced.
+
+### 4. Reactive UI (Pub/Sub)
+- Features a **decoupled reactivity model**. Components subscribe to a central `appState` rather than calling each other directly, enabling a scalable and maintainable Master-Detail architecture.
+
+---
+
+## ✨ Features
 - **Monochromatic UI**: A sleek, high-contrast design system optimized for concentration.
-- **Smart Task Management**: Categorize, prioritize, and manage tasks with subtask support.
-- **Persistent Pomodoro**: A robust timer engine that keeps ticking even if the app or renderer restarts.
-- **Command Palette (`Cmd+K`)**: Rapid navigation and actions via a powerful keyboard-driven interface.
+- **Smart Task Management**: Categorize, prioritize, and manage tasks with deep subtask support.
+- **Persistent Pomodoro**: A robust state-machine timer that survives app reloads.
+- **Command Palette (`Cmd+K`)**: Rapid navigation and actions via a powerful keyboard-driven modal.
 - **System Tray Integration**: Ambient timer display and quick-add functionality from the OS menu bar.
-- **Data Privacy**: 100% offline. No telemetry. No cloud syncing. Your data never leaves your machine.
 
 ## 📁 Project Structure
 ```text
 focus-now/
-├── main/               # Electron Main Process (Node.js)
-│   ├── services/       # Business logic (Tasks, Timer, Reports)
-│   ├── db.js           # SQLite schema and migrations
-│   └── timer-worker.js # High-precision timer thread
+├── main/               # Electron Main Process (Logic & Services)
+│   ├── services/       # Decoupled business logic (Tasks, Timer, Reports)
+│   ├── db.js           # SQLite schema and WAL-mode initialization
+│   └── timer-worker.js # High-precision background timer
 ├── renderer/           # Electron Renderer Process (UI)
-│   ├── screens/        # Screen-specific HTML partials
-│   └── js/             # Frontend state and IPC bridge
-├── design_asset/       # Google Stitch reference files
-└── tray/               # Lightweight tray-popup implementation
+│   ├── assets/         # Static styles and fonts (No external CDNs)
+│   ├── screens/        # Pixel-perfect HTML partials from Google Stitch
+│   └── js/             # Reactive state and custom SPA router
+└──Tray/                # Lightweight tray-popup implementation
 ```
 
 ## ⌨️ Getting Started
@@ -51,6 +61,7 @@ focus-now/
 git clone https://github.com/your-repo/focus.git
 cd focus
 npm install
+npx @electron/rebuild  # Required to sync native SQLite with Electron
 ```
 
 ### Development
@@ -63,16 +74,6 @@ npm start
 npm run build
 ```
 
-## 🔒 Security & Privacy
-Focus implements a secure context bridge for IPC, disabling `nodeIntegration` in the renderer to prevent XSS-based attacks. As a local-first application, it follows the principle of least privilege regarding system access.
-
-## 🗺 Roadmap
-- [x] Core Backend Services & SQLite Integration
-- [x] High-precision Timer Engine
-- [/] Stitch UI Integration (In Progress)
-- [ ] Native OS Widgets (Reference Stage)
-- [ ] Data Export (JSON/CSV)
-
 ---
 
-*Generated by Focus Team.*
+*Focus — Reclaiming your deep work sessions.*

@@ -40,71 +40,49 @@ The active timer is always the primary visual element on screen.
 
 ---
 
-## 2. Technology Stack
+## 2. Technology Stack & Architectural Standards
 
-| Layer | Choice | Reason |
+| Layer | Choice | Senior Recommendation |
 |---|---|---|
 | **Shell** | Electron.js | Cross-platform native window + OS tray + system notifications |
-| **Renderer** | HTML/CSS (Stitch output) | Pixel-perfect Stitch fidelity, zero framework overhead |
-| **IPC** | `contextBridge` (preload) | Secure context isolation; no `nodeIntegration` in renderer |
-| **Database** | `better-sqlite3` | Synchronous, bundled SQLite — no async complexity |
-| **Timer Engine** | Node.js `worker_threads` | Off-main-thread tick; survives renderer reload |
+| **Renderer** | HTML/CSS (Stitch output) | **Pixel-perfect static assets.** No CDN injection for CSS. |
+| **IPC** | `contextBridge` | **Thin proxies only.** No business logic in `ipcMain`. |
+| **Database** | `better-sqlite3` | **WAL (Write-Ahead Logging)** mode enabled for concurrency. |
+| **Timer Engine** | Node.js `worker_threads` | **Full State Machine** internal to the worker (survives reloads). |
+| **State Management**| Pub-Sub (`state.js`) | **Decoupled reactivity.** Screens subscribe to state, not each other. |
 | **Notifications** | Electron `Notification` API | Native OS notification (macOS / Windows) |
 | **Tray** | Electron `Tray` + `Menu` | Menu bar / system tray persistent icon |
-| **Global Shortcuts** | Electron `globalShortcut` | `Cmd+K`, `Cmd+Shift+Space`, etc. |
+| **Global Shortcuts**| Electron `globalShortcut` | `Cmd+K`, `Cmd+Shift+Space`, etc. |
 | **Auto-updater** | `electron-updater` | GitHub Releases rolling updates |
-| **Packager** | `electron-builder` | `.dmg` (macOS), `.exe` NSIS (Windows) |
-
----
-
-## 3. Project Structure
+| **Packager** | `electron-builder` | `.dmg` (macOS), `.exe` ## 3. Project Structure (Refined)
 
 ```
 focus-electron/
 ├── main/                        # Electron main process (Node.js)
-│   ├── index.js                 # App entry point — BrowserWindow, Tray, IPC
-│   ├── ipc-handlers.js          # All ipcMain.handle() registrations
-│   ├── timer-worker.js          # worker_threads timer engine
-│   ├── db.js                    # better-sqlite3 init + migrations
-│   ├── services/
-│   │   ├── task-service.js      # CRUD + FTS search
-│   │   ├── timer-service.js     # Start/pause/stop/tick orchestration
-│   │   ├── report-service.js    # Aggregate queries for analytics
-│   │   ├── settings-service.js  # Read/write app_settings table
-│   │   └── notification-service.js  # Electron Notification + scheduling
-│   └── preload.js               # contextBridge API surface
+│   ├── index.js                 # App entry point — BrowserWindow, IPC
+│   ├── db.js                    # better-sqlite3 init + migrations (WAL mode)
+│   ├── ipc-handlers.js          # Clean mapping between IPC and Service layer
+│   ├── timer-worker.js          # Self-contained timer state machine
+│   ├── services/                # Decoupled business logic (Pure Services)
+│   │   ├── task-service.js
+│   │   ├── timer-service.js
+│   │   ├── report-service.js
+│   │   ├── settings-service.js
+│   │   └── notification-service.js
+│   └── preload.js               # Minimalist window.focusAPI surface
 │
 ├── renderer/                    # Electron renderer (HTML/CSS/JS)
 │   ├── index.html               # App shell — single-page with view routing
-│   ├── styles/
-│   │   └── design-system.css    # Design tokens from Stitch (colors, type, spacing)
-│   ├── screens/                 # One HTML partial per Stitch screen
-│   │   ├── s1-dashboard.html
-│   │   ├── s2-task-management.html
-│   │   ├── s3-task-detail.html
-│   │   ├── s4-focus-mode.html
-│   │   ├── s5-reports.html
-│   │   ├── s6-settings.html
-│   │   ├── s7-command-palette.html
-│   │   └── s8-menu-bar-popup.html
+│   ├── assets/
+│   │   └── styles/              # Compiled CSS from Stitch (No Tailwind CDN)
+│   ├── screens/                 # Static HTML partials from Stitch
 │   ├── js/
-│   │   ├── router.js            # Client-side view switcher (no framework)
-│   │   ├── state.js             # In-memory reactive state (pub/sub)
+│   │   ├── router.js            # SPA view switcher (Relative paths)
+│   │   ├── state.js             # Centralized Pub-Sub state (Reactive)
 │   │   ├── ipc-bridge.js        # Thin wrapper around window.focusAPI
-│   │   └── screens/             # Per-screen controller JS
-│   │       ├── dashboard.js
-│   │       ├── task-management.js
-│   │       ├── task-detail.js
-│   │       ├── focus-mode.js
-│   │       ├── reports.js
-│   │       ├── settings.js
-│   │       ├── command-palette.js
-│   │       └── menu-bar.js
-│   └── assets/
-│       └── icons/
-│
-├── tray/                        # Separate lightweight BrowserWindow for tray popup
-│   └── tray-popup.html          # Stitch S8 rendered standalone
+│   │   └── screens/             # Controller JS (Subscribe to State)
+```
+tml          # Stitch S8 rendered standalone
 │
 ├── project_documentations/      # Reference docs (read-only for Jules)
 │   ├── DESIGN_PLAN.md
@@ -193,48 +171,32 @@ INSERT OR IGNORE INTO app_settings (key, value) VALUES
 
 ---
 
-## 5. IPC API Contract
+## 5. State Management & Reactivity (Pub/Sub)
 
-All renderer↔main communication goes through `contextBridge`. The preload exposes:
+To avoid tight coupling between screens (e.g., Dashboard needing to know about the Task Detail side panel), the app uses a **Pub/Sub observer pattern**.
+
+- **State Object**: `window.appState` manages `tasks`, `timer`, and `currentRoute`.
+- **Subscription**: Controllers call `appState.subscribe('tasks', (data) => this.render(data))`.
+- **Updates**: When a task is created via IPC, the service returns the new state, which is updated in `appState`, automatically triggering a re-render in all listening screens.
+
+---
+
+## 6. IPC API Contract (Thin Proxy Pattern)
+
+Renderer calls remain minimalist. All validation and logic reside in the Main process Services.
 
 ```js
 // preload.js — window.focusAPI
 window.focusAPI = {
-  // Tasks
+  // Tasks (Thin proxy to TaskService)
   getTasks: (filter) => ipcRenderer.invoke('tasks:get', filter),
   createTask: (data) => ipcRenderer.invoke('tasks:create', data),
-  updateTask: (id, changes) => ipcRenderer.invoke('tasks:update', { id, changes }),
-  deleteTask: (id) => ipcRenderer.invoke('tasks:delete', id),
-  searchTasks: (query) => ipcRenderer.invoke('tasks:search', query),
-  getTaskWithSubtasks: (id) => ipcRenderer.invoke('tasks:getWithSubtasks', id),
-
-  // Timer
+  
+  // Timer (Thin proxy to TimerService)
   startTimer: (taskId) => ipcRenderer.invoke('timer:start', taskId),
-  pauseTimer: () => ipcRenderer.invoke('timer:pause'),
-  resumeTimer: () => ipcRenderer.invoke('timer:resume'),
-  stopTimer: () => ipcRenderer.invoke('timer:stop'),
-  skipBreak: () => ipcRenderer.invoke('timer:skipBreak'),
-  getTimerState: () => ipcRenderer.invoke('timer:getState'),
   onTimerTick: (cb) => ipcRenderer.on('timer:tick', (_, data) => cb(data)),
 
-  // Reports
-  getDailySummary: (dateUnix) => ipcRenderer.invoke('reports:daily', dateUnix),
-  getWeeklySummary: () => ipcRenderer.invoke('reports:weekly'),
-
-  // Settings
-  getSetting: (key) => ipcRenderer.invoke('settings:get', key),
-  setSetting: (key, value) => ipcRenderer.invoke('settings:set', { key, value }),
-  getAllSettings: () => ipcRenderer.invoke('settings:getAll'),
-
-  // Notes
-  getNote: (taskId) => ipcRenderer.invoke('notes:get', taskId),
-  upsertNote: (taskId, content) => ipcRenderer.invoke('notes:upsert', { taskId, content }),
-
-  // Reminders
-  setReminder: (taskId, remindAt) => ipcRenderer.invoke('reminders:set', { taskId, remindAt }),
-  deleteReminder: (taskId) => ipcRenderer.invoke('reminders:delete', taskId),
-
-  // Navigation (main → renderer)
+  // Navigation (main → renderer events)
   onNavigate: (cb) => ipcRenderer.on('app:navigate', (_, screen) => cb(screen)),
 };
 ```
@@ -666,3 +628,14 @@ Execute in the following sequence to minimize blocking dependencies:
 
 *Stitch Project ID: `14675736852343732341` · All screen references are exact Stitch output — reproduce UI with zero visual deviation.*
 *Generated by Antigravity for Google Jules · Focus App · Electron.js*
+
+---
+
+## 13. Architectural Decisions (Phase 2 Additions)
+
+| Decision | Rationale |
+|---|---|
+| **Template & Hook Approach** | To make Stitch HTML interactive without breaking "pixel-perfect" styling, minimal `id`/`data-*` hooks and template strings are injected. Existing DOM structures and CSS remain intact. |
+| **Fixed-Width Desktop Model** | Focuses on deep work; the app window enforces a `minWidth`/`minHeight` instead of forcing fluid web responsiveness on fixed-pixel generative design. |
+| **S3 Task Detail Injection** | S3 exists as an independent partial but is dynamically injected directly into S2's DOM container upon task selection, creating a "slide-in" native feel without a full route transition. |
+| **PiP as Separate BrowserWindow** | S4's PiP is instantiated as a separate `alwaysOnTop` transparent `BrowserWindow` to function persistently at the OS level while the main app is minimized. |
